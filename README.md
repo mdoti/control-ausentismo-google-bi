@@ -26,7 +26,7 @@ Implementación de **Google Apps Script** para reflejar automáticamente los reg
 * **En PC:** Tablero de control para auditoría y reportes mensuales.
 ![Vista de Calendario en PC](Vista_Pc_Calendar.png)
 * **Mobile-First:** Disponibilidad de la información en **Google Calendar** para todos los jefes de sector, permitiendo ver quién falta y por qué desde su celular en segundos.
-<img src="Vista_Mobil_Calendar_Mensual.jpg" width="450" alt="Vista_Mobil_Calendar_Mensual">
+<img src="Vista_Mobil_Calendar_Mensual.jpg" width="200" alt="Vista_Mobil_Calendar_Mensual">
 ---
 
 ## 🚀 Impacto en el Negocio
@@ -36,6 +36,7 @@ Implementación de **Google Apps Script** para reflejar automáticamente los reg
 
 ---
 *Proyecto desarrollado por Marcelo Doti | Business Intelligence & Gestión Operativa*
+
 
 
 
