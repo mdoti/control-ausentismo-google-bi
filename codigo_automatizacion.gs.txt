@@ -1,0 +1,198 @@
+// =================================================================
+// FUNCIÓN 1: DÍAS LIBRES ORIGINALES (Hoja: Calendario de Solicitudes)
+// 🚨 MODIFICADO: Título del evento cambiado de "Día Libre" a "Art."
+// =================================================================
+function agendarDiasLibres() {
+  // ⚠️ CONFIGURACIÓN DÍAS LIBRES
+  const SHEET_NAME_DL = "Calendario de Solicitudes"; 
+  const CALENDAR_NAME_DL = "Caif_Dias_Solicitados"; // Calendario unificado
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_NAME_DL);
+  
+  if (!sheet) {
+    Logger.log("ERROR: No se encontró la hoja de Días Libres: " + SHEET_NAME_DL);
+    return;
+  }
+  
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    Logger.log("INFO: No hay datos de Días Libres para procesar.");
+    return;
+  }
+
+  const calendar = CalendarApp.getCalendarsByName(CALENDAR_NAME_DL);
+  if (calendar.length === 0) {
+    Logger.log("ERROR: No se encontró el calendario: " + CALENDAR_NAME_DL);
+    return;
+  }
+  const targetCalendar = calendar[0];
+
+  // Leemos hasta la columna E (ID de Calendario)
+  const dataRange = sheet.getRange("A2:E" + lastRow);
+  const data = dataRange.getValues();
+  
+  const updates = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const row = data[i];
+    const rowNum = i + 2; 
+
+    const funcionario = row[0];       // Columna A
+    const fechaInicio = row[1];       // Columna B
+    
+    // ÍNDICES CONFIRMADOS:
+    const diasSolicitados = row[2];   // Columna C (Días)
+    const estado = row[3];            // Columna D (Estado)
+    const eventId = row[4];           // Columna E (ID de Calendario)
+
+    // Condición: Estado es 'Aprobado' Y NO tiene ID Y los DÍAS son un número positivo
+    if (estado === "Aprobado" && !eventId && typeof diasSolicitados === 'number' && diasSolicitados > 0) {
+      
+      // 🚨 MODIFICACIÓN DEL TÍTULO SOLICITADA
+      const title = `Art. - ${funcionario}`; 
+      
+      const startDate = new Date(fechaInicio);
+      const endDateEvent = new Date(startDate); 
+      
+      // Calculamos la fecha de finalización (Añadir los días al Start Date)
+      endDateEvent.setDate(endDateEvent.getDate() + diasSolicitados); 
+
+      try {
+        const event = targetCalendar.createAllDayEvent(title, startDate, endDateEvent);
+
+        updates.push({
+          row: rowNum,
+          newStatus: "Agendado",
+          newId: event.getId()
+        });
+        
+      } catch (e) {
+        Logger.log(`Error al crear evento de Día Libre para ${funcionario} (Fila ${rowNum}): ${e.toString()}`);
+      }
+    }
+  }
+
+  // Si hay actualizaciones, aplicarlas a las columnas D (Estado) y E (ID)
+  if (updates.length > 0) {
+      // El rango empieza en D (índice 4) y cubre 2 columnas (D, E)
+      const statusAndIdRange = sheet.getRange(2, 4, data.length, 2);
+      const currentStatusAndIds = statusAndIdRange.getValues(); 
+
+      updates.forEach(update => {
+          const relativeIndex = update.row - 2; 
+          // Columna D (índice 0 en el sub-array)
+          currentStatusAndIds[relativeIndex][0] = update.newStatus; 
+          // Columna E (índice 1 en el sub-array)
+          currentStatusAndIds[relativeIndex][1] = update.newId;    
+      });
+
+      statusAndIdRange.setValues(currentStatusAndIds);
+  }
+}
+// =================================================================
+// FUNCIÓN 2: AUSENCIAS JUSTIFICADAS (Hoja: Control de Ausencias)
+// 🚨 MODIFICADO: Título del evento cambiado a "Funcionario - Motivo"
+// =================================================================
+function agendarAusenciasJustificadas() {
+  // ⚠️ CONFIGURACIÓN AUSENCIAS JUSTIFICADAS
+  const CALENDAR_NAME = "Caif_Dias_Solicitados"; // Calendario unificado
+  const SHEET_NAME = "Control de Ausencias";        
+  
+  // Títulos simplificados (Motivo - Funcionario) y nombres de motivos corregidos
+  const colorMap = {
+    // AJUSTE DE ORTOGRAFÍA
+    "PAP o Mamografía": {colorId: '11', title: "PAP o Mamografía"},
+    "Certificado Médico": {colorId: '9', title: "Certificado Médico"},       
+    "Donación de Sangre": {colorId: '10', title: "Donación de Sangre"},      
+    "Día por Estudio": {colorId: '5', title: "Día por Estudio"},           
+    "Citación Judicial": {colorId: '2', title: "Citación Judicial"},
+    "Falta": {colorId: '8', title: "Falta"}
+  };
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_NAME);
+  
+  if (!sheet) {
+    Logger.log("ERROR: No se encontró la hoja con el nombre: " + SHEET_NAME);
+    return;
+  }
+  
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    Logger.log("INFO: No hay filas de datos para procesar en " + SHEET_NAME);
+    return;
+  }
+  
+  const calendar = CalendarApp.getCalendarsByName(CALENDAR_NAME);
+  if (calendar.length === 0) {
+    Logger.log("ERROR: No se encontró el calendario con el nombre: " + CALENDAR_NAME);
+    return;
+  }
+  const targetCalendar = calendar[0];
+
+  // Rango A:G (Funcionario, Fecha Inicio, Fecha Fin, Dias, Motivo, Estado, ID)
+  const range = sheet.getRange("A2:G" + lastRow);
+  const data = range.getValues();
+  
+  const eventsToUpdate = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const row = data[i];
+    const rowNum = i + 2;
+
+    const funcionario = row[0];
+    const fechaInicio = row[1];
+    const dias = row[3];
+    const motivo = row[4];
+    const estado = row[5];
+    const eventId = row[6];
+
+    // Condición: Estado es 'Aprobado' Y NO tiene ID de Evento Y hay días a registrar
+    if (estado === "Aprobado" && !eventId && dias > 0) {
+      
+      const config = colorMap[motivo];
+      
+      if (!config) {
+        Logger.log(`Motivo '${motivo}' no encontrado en el mapeo de colores. Fila ${rowNum}.`);
+        continue; 
+      }
+      
+      const startDate = new Date(fechaInicio);
+      const endDate = new Date(startDate);
+      // Ajuste para el evento de día completo: suma los días
+      endDate.setDate(endDate.getDate() + dias); 
+
+      // 🚨 MODIFICACIÓN DEL ORDEN SOLICITADA: Funcionario - Motivo
+      const eventTitle = `${funcionario} - ${config.title}`;
+      
+      try {
+        const event = targetCalendar.createAllDayEvent(eventTitle, startDate, endDate);
+        event.setColor(config.colorId); 
+
+        eventsToUpdate.push({
+          row: rowNum,
+          newStatus: "Agendado",
+          newId: event.getId()
+        });
+        
+      } catch (e) {
+        Logger.log(`Error al crear evento para ${funcionario} (Fila ${rowNum}): ${e.toString()}`);
+      }
+    }
+  }
+
+  // Actualizar la hoja de cálculo (columnas F y G)
+  if (eventsToUpdate.length > 0) {
+      const statusAndIdRange = sheet.getRange(2, 6, data.length, 2);
+      const currentStatusAndIds = statusAndIdRange.getValues(); 
+
+      eventsToUpdate.forEach(update => {
+          const relativeIndex = update.row - 2; 
+          currentStatusAndIds[relativeIndex][0] = update.newStatus; 
+          currentStatusAndIds[relativeIndex][1] = update.newId;    
+      });
+
+      statusAndIdRange.setValues(currentStatusAndIds);
+  }
+}
