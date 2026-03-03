@@ -24,9 +24,8 @@ Implementación de **Google Apps Script** para reflejar automáticamente los reg
 
 ### 3. Capa de Visualización (Front-end)
 * **En PC:** Tablero de control para auditoría y reportes mensuales.
-![Vista de Calendario en PC](Vista_Pc_Calendar.jpg)
+![Vista de Calendario en PC](Vista_Pc_Calendar.png)
 * **Mobile-First:** Disponibilidad de la información en **Google Calendar** para todos los jefes de sector, permitiendo ver quién falta y por qué desde su celular en segundos.
-![Vista de Calendario en Celular](Vista_Mobil_Calendar.jpg)
 ![Vista de Calendario en Celular2](Vista_Mobil_Calendar_Mensual.jpg)
 ---
 
@@ -37,5 +36,6 @@ Implementación de **Google Apps Script** para reflejar automáticamente los reg
 
 ---
 *Proyecto desarrollado por Marcelo Doti | Business Intelligence & Gestión Operativa*
+
 
 
