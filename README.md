@@ -14,6 +14,8 @@ Diseñé un flujo de datos automatizado que actúa como puente entre el registro
 
 ### 1. Capa de Datos (Back-end)
 Estructura en **Google Sheets** optimizada con validación de datos para categorizar motivos de inasistencia (médica, licencia, artículo, etc.).
+
+
 ![Vista de la Planilla de Datos](Control_de_Faltas_General.png)
 ![Vista de la Planilla de Faltas](Registro_Faltas.png)
 ![Vista de la Planilla de Libres](Solicitud_Dias_Libres.png)
@@ -24,9 +26,15 @@ Implementación de **Google Apps Script** para reflejar automáticamente los reg
 
 ### 3. Capa de Visualización (Front-end)
 * **En PC:** Tablero de control para auditoría y reportes mensuales.
+
+
 ![Vista de Calendario en PC](Vista_Pc_Calendar.png)
+
+
 * **Mobile-First:** Disponibilidad de la información en **Google Calendar** para todos los jefes de sector, permitiendo ver quién falta y por qué desde su celular en segundos.
-<img src="Vista_Mobil_Calendar_Mensual.jpg" width="200" alt="Vista_Mobil_Calendar_Mensual">
+
+  
+<img src="Vista_Mobil_Calendar_Mensual.jpg" width="300" alt="Vista_Mobil_Calendar_Mensual">
 ---
 
 ## 🚀 Impacto en el Negocio
@@ -36,6 +44,7 @@ Implementación de **Google Apps Script** para reflejar automáticamente los reg
 
 ---
 *Proyecto desarrollado por Marcelo Doti | Business Intelligence & Gestión Operativa*
+
 
 
 
