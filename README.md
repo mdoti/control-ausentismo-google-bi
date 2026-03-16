@@ -43,6 +43,9 @@ Implementación de **Google Apps Script** para reflejar automáticamente los reg
 * **Transparencia:** Registro histórico auditable para control de gestión y liquidación de haberes.
 
 ---
+
+🛠️ Proceso de Desarrollo y Colaboración
+Este proyecto fue desarrollado de forma iterativa, utilizando Inteligencia Artificial (Gemini) como asistente técnico para la escritura de scripts complejos y el debugging de fórmulas avanzadas. Esta metodología de "Human-in-the-loop" permitió asegurar que las soluciones técnicas se alinearan perfectamente con las necesidades operativas reales del sector logístico.
 *Proyecto desarrollado por Marcelo Doti | Business Intelligence & Gestión Operativa*
 
 
